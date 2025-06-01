@@ -1,0 +1,4 @@
+.env
+.cache.json
+node_modules
+fast_coin/build
