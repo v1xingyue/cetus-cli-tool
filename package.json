@@ -1,6 +1,6 @@
 {
   "name": "cetus-cli-tool",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -8,12 +8,18 @@
   },
   "scripts": {
     "build:tx_json": "cd fast_coin && sui move build --dump-bytecode-as-base64 > ../src/fast_coin_tx.json ",
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "cross-env NODE_OPTIONS='--loader ts-node/esm' ts-node src/cli.ts"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cetus",
+    "sui",
+    "cli",
+    "tool"
+  ],
+  "author": "v1xingyue<v1xingyue@gmail.com>",
   "license": "ISC",
-  "description": "",
+  "description": "A command-line interface tool for interacting with the Cetus Protocol on the Sui blockchain.",
   "devDependencies": {
     "@types/bn.js": "^5.1.6",
     "@types/mocha": "^10.0.10",
@@ -28,6 +34,8 @@
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.3.4",
     "@mysten/sui": "^1.30.1",
     "bn.js": "^5.2.2",
+    "chalk": "^5.4.1",
+    "cross-env": "^7.0.3",
     "decimal.js": "^10.5.0",
     "dotenv": "^16.5.0",
     "tslib": "^2.8.1",

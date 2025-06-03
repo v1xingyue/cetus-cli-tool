@@ -1,6 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { SuiClient } from "@mysten/sui/client";
+import { CoinMetadata, SuiClient } from "@mysten/sui/client";
 import { PublishParams } from "./common.js";
 import { MemoryCache } from "./memory_cache.js";
 export declare class Runtime {
@@ -22,6 +22,6 @@ export declare class Runtime {
     freezePackageTransaction(coinType: string, upgradeCap: string, treasuryCap: string | null): Transaction;
     getMintTransaction(treasury: string, amount: string, recipient: string | null, freeze: boolean, coinType: string): Transaction;
     getTransactionLink(digest: string): string;
-    getCoinMetadata(coinType: string): Promise<any>;
+    getCoinMetadata(coinTypeOrAlias: string): Promise<CoinMetadata | null>;
     save(): void;
 }

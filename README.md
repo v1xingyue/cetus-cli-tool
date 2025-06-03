@@ -1,6 +1,6 @@
 # Cetus CLI Tool
 
-A command-line interface tool for interacting with the Cetus Protocol on the Sui blockchain. This tool provides functionality for token management, pool operations, and various blockchain interactions.
+A command-line interface tool for interacting with the Cetus Protocol on the Sui blockchain. This tool provides functionality for token management, pool operations, liquidity management, and various blockchain interactions.
 
 ## Features
 
@@ -9,6 +9,8 @@ A command-line interface tool for interacting with the Cetus Protocol on the Sui
 - 💰 **Wallet Integration**: Built-in wallet management and balance checking
 - 🌐 **Multi-Network Support**: Works with mainnet, testnet, and devnet
 - 📦 **Package Management**: Deploy and freeze Move packages
+- 🔄 **Swap Operations**: Execute token swaps through Cetus pools
+- 📊 **Position Management**: View and manage liquidity positions
 
 ## Installation
 
@@ -103,7 +105,7 @@ cetus-cli-tool info
 ```
 
 #### `config-set`
-Update configuration settings:
+Update configuration settings interactively:
 ```bash
 cetus-cli-tool config-set
 ```
@@ -119,17 +121,17 @@ cetus-cli-tool create-token --name "MyToken" --symbol "MTK" --decimal 9 --descri
 **Options:**
 - `-n, --name`: Token name (default: "x")
 - `-s, --symbol`: Token symbol (default: "X")
-- `-d, --decimal`: Token decimals (6-18, default: 9)
+- `-d, --decimal`: Token decimals (choices: 6-18, default: 9)
 - `--description`: Token description (default: "No description")
 
 #### `tokens`
-List and manage your tokens:
+List and manage your created tokens:
 ```bash
 cetus-cli-tool tokens
 ```
 
 #### `mint`
-Mint tokens to an address:
+Mint tokens to an address (interactive command):
 ```bash
 cetus-cli-tool mint
 ```
@@ -142,9 +144,19 @@ Freeze a Move package to prevent further upgrades:
 cetus-cli-tool freeze-package
 ```
 
-### Cetus Protocol Commands
+### Utility Commands
+
+#### `compare`
+Compare different values or states:
+```bash
+cetus-cli-tool compare
+```
+
+## Cetus Protocol Commands
 
 All Cetus-specific commands are under the `cetus` subcommand:
+
+### Basic Cetus Commands
 
 #### `cetus hello`
 Test Cetus integration:
@@ -157,6 +169,8 @@ Display Cetus protocol information:
 ```bash
 cetus-cli-tool cetus info
 ```
+
+### Pool Management
 
 #### `cetus list-pool [options]`
 List pools for specific coin pairs:
@@ -172,18 +186,47 @@ cetus-cli-tool cetus list-pool --coins 0x2::sui::SUI 0x5d4b302506645c37ff133b98c
 - `--coins`: Array of coin types to query (minimum 2 required)
 
 #### `cetus create-pool`
-Create a new liquidity pool:
+Create a new liquidity pool (interactive command):
 ```bash
 cetus-cli-tool cetus create-pool
 ```
 
-### Utility Commands
+### Position Management
 
-#### `compare`
-Compare different values or states:
+#### `cetus positions [options]`
+List liquidity positions by owner:
 ```bash
-cetus-cli-tool compare
+# List your own positions
+cetus-cli-tool cetus positions
+
+# List positions for a specific owner
+cetus-cli-tool cetus positions --owner 0x1234...
+
+# Show detailed position information
+cetus-cli-tool cetus positions --width
 ```
+
+**Options:**
+- `--owner`: Owner address (default: your wallet address)
+- `--width`: Show detailed position information (default: false)
+
+### Swap Operations
+
+#### `cetus swap [options]`
+Execute token swaps through Cetus pools:
+```bash
+# Swap 0.1 token A for token B with 5% slippage
+cetus-cli-tool cetus swap --pool-address 0x1234... --amount 0.1 --a2b true --slippage 5
+
+# Swap 1.0 token B for token A with 3% slippage
+cetus-cli-tool cetus swap --pool-address 0x1234... --amount 1.0 --a2b false --slippage 3
+```
+
+**Options:**
+- `--pool-address`: Pool address (required)
+- `--amount`: Amount to swap in human-readable format (default: "0.1")
+- `--a2b`: Swap direction - true for A to B, false for B to A (default: true)
+- `--slippage`: Slippage tolerance in percentage (default: 5)
 
 ## Configuration
 
@@ -211,12 +254,25 @@ src/
 ├── cli.ts              # Main CLI entry point
 ├── commands/           # Command implementations
 │   ├── cetus/         # Cetus protocol commands
-│   ├── create-token.ts
-│   ├── init.ts
-│   └── ...
+│   │   ├── hello.ts   # Test Cetus integration
+│   │   ├── info.ts    # Cetus protocol info
+│   │   ├── list-pool.ts # List pools
+│   │   ├── create-pool.ts # Create pools
+│   │   ├── positions.ts # Manage positions
+│   │   └── swap.ts    # Execute swaps
+│   ├── create-token.ts # Token creation
+│   ├── tokens.ts      # Token management
+│   ├── mint.ts        # Token minting
+│   ├── init.ts        # CLI initialization
+│   ├── info.ts        # System information
+│   ├── config-set.ts  # Configuration
+│   ├── freeze-package.ts # Package freezing
+│   ├── compare.ts     # Utility comparisons
+│   └── hello.ts       # Test command
 ├── utils.ts           # Utility functions
 ├── runtime.ts         # Runtime configuration
-└── cetus_tool.ts      # Cetus SDK integration
+├── cetus_tool.ts      # Cetus SDK integration
+└── common.ts          # Common types and constants
 ```
 
 ### Building
@@ -227,13 +283,28 @@ npm run build
 
 # Build Move package bytecode
 npm run build:tx_json
+
+# Development mode with hot reload
+npm run dev
 ```
 
 ### Adding New Commands
 
-1. Create a new command file in `src/commands/`
-2. Implement the `CommandModule` interface
-3. Export the command in `src/commands/index.ts`
+1. Create a new command file in `src/commands/` or `src/commands/cetus/`
+2. Implement the `CommandModule` interface from yargs
+3. Export the command in the appropriate `index.ts` file
+
+## Command Help
+
+For any command, use the `--help` flag to see detailed usage information:
+```bash
+cetus-cli-tool --help
+cetus-cli-tool init --help
+cetus-cli-tool create-token --help
+cetus-cli-tool cetus --help
+cetus-cli-tool cetus swap --help
+cetus-cli-tool cetus positions --help
+```
 
 ## Troubleshooting
 
@@ -251,6 +322,16 @@ npm run build:tx_json
    - Ensure your wallet has enough SUI for gas fees
    - Check balance with `cetus-cli-tool info`
 
+4. **Pool not found errors**
+   - Verify the pool address is correct
+   - Ensure you're on the correct network
+   - Check if the pool exists using `cetus list-pool`
+
+5. **Swap failures**
+   - Check if you have sufficient token balance
+   - Verify slippage tolerance is appropriate
+   - Ensure the pool has enough liquidity
+
 ### Getting Help
 
 For any command, use the `--help` flag:
@@ -258,6 +339,30 @@ For any command, use the `--help` flag:
 cetus-cli-tool --help
 cetus-cli-tool init --help
 cetus-cli-tool cetus list-pool --help
+```
+
+## Examples
+
+### Complete Workflow Example
+
+```bash
+# 1. Initialize the tool
+cetus-cli-tool init --network testnet
+
+# 2. Check your setup
+cetus-cli-tool info
+
+# 3. Create a custom token
+cetus-cli-tool create-token --name "MyToken" --symbol "MTK" --decimal 9
+
+# 4. List available pools
+cetus-cli-tool cetus list-pool
+
+# 5. Check your positions
+cetus-cli-tool cetus positions
+
+# 6. Execute a swap
+cetus-cli-tool cetus swap --pool-address 0x... --amount 0.1 --a2b true --slippage 5
 ```
 
 ## License

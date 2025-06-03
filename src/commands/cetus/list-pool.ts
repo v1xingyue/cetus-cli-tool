@@ -34,6 +34,10 @@ const listPool: CommandModule<Option, Option> = {
       const pool = pools[i];
       const metadataA = await runtime.getCoinMetadata(pool.coinTypeA);
       const metadataB = await runtime.getCoinMetadata(pool.coinTypeB);
+      if (!metadataA || !metadataB) {
+        console.error("coin metadata not found");
+        return;
+      }
       console.log(
         pool.poolAddress,
         pool.coinTypeA,

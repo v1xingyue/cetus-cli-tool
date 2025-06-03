@@ -23,3 +23,4 @@ fun init(witness: TOKEN, ctx: &mut TxContext) {
     transfer::public_transfer(metadata,ctx.sender());
 	transfer::public_transfer(treasury,ctx.sender());
 }
+

@@ -2,7 +2,16 @@ import hello from "./hello.js";
 import info from "./info.js";
 import listPool from "./list-pool.js";
 import createPool from "./create-pool.js";
-let commands = [hello, info, listPool, createPool];
+import listPositions from "./positions.js";
+import swapCommand from "./swap.js";
+let commands = [
+    hello,
+    info,
+    listPool,
+    createPool,
+    listPositions,
+    swapCommand,
+];
 const cetusCommand = {
     command: "cetus",
     describe: "cetus command tools",

@@ -1,7 +1,7 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-import { PublishParams } from "./common.js";
+import { CoinMetadata, getFullnodeUrl, SuiClient } from "@mysten/sui/client";
+import { PublishParams, SuiCoin } from "./common.js";
 import fs from "fs";
 import { MemoryCache } from "./memory_cache.js";
 
@@ -196,8 +196,27 @@ export class Runtime {
     // return `https://suiscan.xyz/${this.getNetwork()}/tx/${digest}`;
   }
 
-  async getCoinMetadata(coinType: string) {
-    const cacheKey = `coin_metadata_${coinType}`;
+  async getCoinMetadata(coinTypeOrAlias: string): Promise<CoinMetadata | null> {
+    let coinType = coinTypeOrAlias;
+    if (!coinTypeOrAlias.includes("::")) {
+      switch (coinTypeOrAlias.toLocaleLowerCase()) {
+        case "sui":
+          coinType = "0x2::sui::SUI";
+          break;
+        case "usdc":
+          if (this.network == "mainnet") {
+            coinType = SuiCoin.USDC;
+          }
+          break;
+        default:
+          console.error(`coin type ${coinTypeOrAlias} not found`);
+          throw new Error(`coin alias type ${coinTypeOrAlias} not found`);
+      }
+    }
+
+    console.log("coinType", coinType);
+
+    const cacheKey = `coin_metadata_${this.network}_${coinType}`;
     const dataCache = this.cache.get(cacheKey);
     if (dataCache) {
       return dataCache;

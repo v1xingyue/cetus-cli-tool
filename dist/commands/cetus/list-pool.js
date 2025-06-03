@@ -25,6 +25,10 @@ const listPool = {
             const pool = pools[i];
             const metadataA = await runtime.getCoinMetadata(pool.coinTypeA);
             const metadataB = await runtime.getCoinMetadata(pool.coinTypeB);
+            if (!metadataA || !metadataB) {
+                console.error("coin metadata not found");
+                return;
+            }
             console.log(pool.poolAddress, pool.coinTypeA, pool.coinTypeB, getPriceFromSqrtPrice(new BN(pool.current_sqrt_price), metadataA.decimals, metadataB.decimals).toString());
         }
     },

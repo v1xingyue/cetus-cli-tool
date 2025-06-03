@@ -3,8 +3,17 @@ import hello from "./hello.js";
 import info from "./info.js";
 import listPool from "./list-pool.js";
 import createPool from "./create-pool.js";
+import listPositions from "./positions.js";
+import swapCommand from "./swap.js";
 
-let commands: CommandModule<any, any>[] = [hello, info, listPool, createPool];
+let commands: CommandModule<any, any>[] = [
+  hello,
+  info,
+  listPool,
+  createPool,
+  listPositions,
+  swapCommand,
+];
 
 const cetusCommand: CommandModule<any, any> = {
   command: "cetus",

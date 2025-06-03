@@ -1,6 +1,7 @@
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Runtime } from "./runtime.js";
-const cacheFile = "./cache.json";
+import chalk from "chalk";
+const cacheFile = "./.cache.json";
 export const generateAccount = () => {
     const pair = Ed25519Keypair.generate();
     return pair;
@@ -63,6 +64,7 @@ export const getCreatedObject = (resp, filterOpitons) => {
 };
 export const saveCache = () => {
     if (runtimeInstance) {
+        console.log("save cache to file", chalk.gray(cacheFile));
         runtimeInstance.cache.save_to_file(cacheFile);
     }
 };

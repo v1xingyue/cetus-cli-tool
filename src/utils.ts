@@ -1,8 +1,9 @@
 import { SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Runtime } from "./runtime.js";
+import chalk from "chalk";
 
-const cacheFile = "./cache.json";
+const cacheFile = "./.cache.json";
 
 export const generateAccount = () => {
   const pair = Ed25519Keypair.generate();
@@ -86,6 +87,7 @@ export const getCreatedObject = (
 
 export const saveCache = () => {
   if (runtimeInstance) {
+    console.log("save cache to file", chalk.gray(cacheFile));
     runtimeInstance.cache.save_to_file(cacheFile);
   }
 };
