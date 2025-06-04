@@ -6,6 +6,8 @@ import createPool from "./create-pool.js";
 import listPositions from "./positions.js";
 import swapCommand from "./swap.js";
 import removeLiquidity from "./remove-liquidity.js";
+import closePosition from "./close-position.js";
+import createLiquidity from "./create-liquidity.js";
 
 let commands: CommandModule<any, any>[] = [
   hello,
@@ -15,6 +17,8 @@ let commands: CommandModule<any, any>[] = [
   listPositions,
   swapCommand,
   removeLiquidity,
+  closePosition,
+  createLiquidity,
 ];
 
 const cetusCommand: CommandModule<any, any> = {
