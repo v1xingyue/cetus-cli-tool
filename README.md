@@ -4,13 +4,17 @@ A command-line interface tool for interacting with the Cetus Protocol on the Sui
 
 ## Features
 
-- 🔧 **Token Management**: Create, mint, and manage tokens
+- 🔧 **Token Management**: Create, mint, and manage tokens with customizable metadata
 - 🏊 **Pool Operations**: Create and list Cetus protocol pools
 - 💰 **Wallet Integration**: Built-in wallet management and balance checking
 - 🌐 **Multi-Network Support**: Works with mainnet, testnet, and devnet
 - 📦 **Package Management**: Deploy and freeze Move packages
 - 🔄 **Swap Operations**: Execute token swaps through Cetus pools
-- 📊 **Position Management**: View and manage liquidity positions
+- 📊 **Position Management**: Create, view, manage, and close liquidity positions
+- 💧 **Liquidity Management**: Add and remove liquidity from existing positions
+- ⚙️ **Configuration Management**: Dynamic network and setting configuration
+- 🔍 **Information Display**: Comprehensive wallet and protocol information
+- 🧪 **Development Tools**: Testing commands and utility functions
 
 ## Installation
 
@@ -99,30 +103,34 @@ cetus-cli-tool init --network mainnet
 - `-n, --network`: Network to use (mainnet, testnet, devnet) - default: mainnet
 
 #### `info`
-Display current configuration and wallet information:
+Display current configuration and wallet information including all token balances:
 ```bash
 cetus-cli-tool info
 ```
 
-#### `config-set`
-Update configuration settings interactively:
+#### `config-set [options]`
+Update configuration settings like network:
 ```bash
-cetus-cli-tool config-set
+cetus-cli-tool config-set --network testnet
 ```
+
+**Options:**
+- `-n, --network`: Network to use (mainnet, testnet, devnet) - default: mainnet
 
 ### Token Management
 
 #### `create-token [options]`
-Create a new token on the Sui blockchain:
+Create a new token on the Sui blockchain with customizable metadata:
 ```bash
 cetus-cli-tool create-token --name "MyToken" --symbol "MTK" --decimal 9 --description "My custom token"
 ```
 
 **Options:**
 - `-n, --name`: Token name (default: "x")
-- `-s, --symbol`: Token symbol (default: "X")
+- `-s, --symbol`: Token symbol (default: "X")  
 - `-d, --decimal`: Token decimals (choices: 6-18, default: 9)
 - `--description`: Token description (default: "No description")
+- `--icon`: Token icon URL or base64 (auto-generated if not provided)
 
 #### `tokens`
 List and manage your created tokens:
@@ -130,11 +138,17 @@ List and manage your created tokens:
 cetus-cli-tool tokens
 ```
 
-#### `mint`
-Mint tokens to an address (interactive command):
+#### `mint [options]`
+Mint tokens to an address:
 ```bash
-cetus-cli-tool mint
+cetus-cli-tool mint --package <package_id> --amount 100 --recipient <address>
 ```
+
+**Options:**
+- `-p, --package`: Package ID (required)
+- `-r, --recipient`: Recipient address (default: your wallet address)
+- `-a, --amount`: Amount to mint in human readable format (default: 1)
+- `-f, --freeze`: Freeze the treasury cap after minting (default: false)
 
 ### Package Management
 
@@ -147,7 +161,7 @@ cetus-cli-tool freeze-package
 ### Utility Commands
 
 #### `compare`
-Compare different values or states:
+Compare different deployment modules and configurations:
 ```bash
 cetus-cli-tool compare
 ```
@@ -185,11 +199,17 @@ cetus-cli-tool cetus list-pool --coins 0x2::sui::SUI 0x5d4b302506645c37ff133b98c
 **Options:**
 - `--coins`: Array of coin types to query (minimum 2 required)
 
-#### `cetus create-pool`
-Create a new liquidity pool (interactive command):
+#### `cetus create-pool [options]`
+Create a new liquidity pool:
 ```bash
-cetus-cli-tool cetus create-pool
+cetus-cli-tool cetus create-pool --coin-a <coin_type> --coin-b sui --init-price 1.5 --amount-a 100
 ```
+
+**Options:**
+- `--coin-a`: Coin A type or alias name (required)
+- `--coin-b`: Coin B type or alias name (default: "sui")
+- `--init-price`: Initial price of coin A (default: 1)
+- `--amount-a`: Amount of coin A in human readable format (default: "0.1")
 
 ### Position Management
 
@@ -208,7 +228,41 @@ cetus-cli-tool cetus positions --width
 
 **Options:**
 - `--owner`: Owner address (default: your wallet address)
-- `--width`: Show detailed position information (default: false)
+- `-w, --width`: Show detailed position information (default: false)
+
+#### `cetus create-liquidity [options]`
+Add liquidity to create a new position or add to existing position:
+```bash
+# Create new position
+cetus-cli-tool cetus create-liquidity --pool <pool_address> --amount 10
+
+# Add to existing position
+cetus-cli-tool cetus create-liquidity --pool <pool_address> --amount 10 --position <position_id>
+```
+
+**Options:**
+- `--pool`: Pool address (required)
+- `--amount`: Amount of coin A in human readable format (required)
+- `--position`: Position ID to add liquidity to (optional, creates new position if not provided)
+
+#### `cetus remove-liquidity [options]`
+Remove liquidity from an existing position:
+```bash
+cetus-cli-tool cetus remove-liquidity --position <position_id> --liquidity 1000000
+```
+
+**Options:**
+- `--position`: Position object ID to remove liquidity from (required)
+- `--liquidity`: Amount of liquidity to remove (required)
+
+#### `cetus close-position [options]`
+Close a position completely:
+```bash
+cetus-cli-tool cetus close-position --position <position_id>
+```
+
+**Options:**
+- `--position`: Position ID to close (required)
 
 ### Swap Operations
 
@@ -231,9 +285,10 @@ cetus-cli-tool cetus swap --pool-address 0x1234... --amount 1.0 --a2b false --sl
 ## Configuration
 
 The tool stores configuration in a local cache file (`.cache.json`) which includes:
-- Network settings
+- Network settings (mainnet, testnet, devnet)
 - Wallet keypair
 - Runtime configuration
+- Token metadata cache
 
 ## Environment Variables
 
@@ -258,21 +313,27 @@ src/
 │   │   ├── info.ts    # Cetus protocol info
 │   │   ├── list-pool.ts # List pools
 │   │   ├── create-pool.ts # Create pools
-│   │   ├── positions.ts # Manage positions
+│   │   ├── positions.ts # View positions
+│   │   ├── create-liquidity.ts # Add liquidity
+│   │   ├── remove-liquidity.ts # Remove liquidity
+│   │   ├── close-position.ts # Close positions
 │   │   └── swap.ts    # Execute swaps
 │   ├── create-token.ts # Token creation
 │   ├── tokens.ts      # Token management
 │   ├── mint.ts        # Token minting
 │   ├── init.ts        # CLI initialization
 │   ├── info.ts        # System information
-│   ├── config-set.ts  # Configuration
+│   ├── config-set.ts  # Configuration management
 │   ├── freeze-package.ts # Package freezing
 │   ├── compare.ts     # Utility comparisons
 │   └── hello.ts       # Test command
 ├── utils.ts           # Utility functions
 ├── runtime.ts         # Runtime configuration
+├── memory_cache.ts    # Memory caching system
 ├── cetus_tool.ts      # Cetus SDK integration
-└── common.ts          # Common types and constants
+├── svg.ts            # SVG icon generation
+├── common.ts          # Common types and constants
+└── deploy_jsons/      # Move package deployment data
 ```
 
 ### Building
@@ -304,6 +365,7 @@ cetus-cli-tool create-token --help
 cetus-cli-tool cetus --help
 cetus-cli-tool cetus swap --help
 cetus-cli-tool cetus positions --help
+cetus-cli-tool cetus create-liquidity --help
 ```
 
 ## Troubleshooting
@@ -316,11 +378,12 @@ cetus-cli-tool cetus positions --help
 2. **Network connection issues**
    - Check your internet connection
    - Verify the network is accessible
-   - Try switching networks with `init --network <network>`
+   - Try switching networks with `config-set --network <network>`
 
 3. **Insufficient balance**
    - Ensure your wallet has enough SUI for gas fees
    - Check balance with `cetus-cli-tool info`
+   - For testnet/devnet, get faucet from https://faucet.testnet.sui.io/
 
 4. **Pool not found errors**
    - Verify the pool address is correct
@@ -331,6 +394,11 @@ cetus-cli-tool cetus positions --help
    - Check if you have sufficient token balance
    - Verify slippage tolerance is appropriate
    - Ensure the pool has enough liquidity
+
+6. **Position management errors**
+   - Verify position ID is correct and exists
+   - Ensure you own the position
+   - Check if position has sufficient liquidity for operations
 
 ### Getting Help
 
@@ -355,15 +423,72 @@ cetus-cli-tool info
 # 3. Create a custom token
 cetus-cli-tool create-token --name "MyToken" --symbol "MTK" --decimal 9
 
-# 4. List available pools
+# 4. Mint some tokens
+cetus-cli-tool mint --package <package_id> --amount 1000
+
+# 5. List available pools
 cetus-cli-tool cetus list-pool
 
-# 5. Check your positions
+# 6. Create a new pool
+cetus-cli-tool cetus create-pool --coin-a <your_token> --coin-b sui --init-price 0.1 --amount-a 100
+
+# 7. Add liquidity (create position)
+cetus-cli-tool cetus create-liquidity --pool <pool_address> --amount 50
+
+# 8. Check your positions
 cetus-cli-tool cetus positions
 
-# 6. Execute a swap
-cetus-cli-tool cetus swap --pool-address 0x... --amount 0.1 --a2b true --slippage 5
+# 9. Execute a swap
+cetus-cli-tool cetus swap --pool-address <pool_address> --amount 1 --a2b true --slippage 5
+
+# 10. Remove some liquidity
+cetus-cli-tool cetus remove-liquidity --position <position_id> --liquidity 500000
+
+# 11. Close position when done
+cetus-cli-tool cetus close-position --position <position_id>
 ```
+
+### Advanced Usage
+
+```bash
+# Switch networks
+cetus-cli-tool config-set --network mainnet
+
+# Create token with custom icon
+cetus-cli-tool create-token --name "Premium Token" --symbol "PREM" --decimal 18 --description "A premium DeFi token" --icon "data:image/svg+xml;base64,..."
+
+# View detailed position information
+cetus-cli-tool cetus positions --width
+
+# Add liquidity to existing position
+cetus-cli-tool cetus create-liquidity --pool <pool_address> --amount 25 --position <existing_position_id>
+```
+
+## Key Features Details
+
+### Token Creation
+- Supports decimals from 6 to 18
+- Auto-generates SVG icons if not provided
+- Creates treasury cap for minting control
+- Updates metadata with comprehensive information
+
+### Pool Management
+- Creates Concentrated Liquidity Market Maker (CLMM) pools
+- Supports any token pair combinations
+- Configurable tick spacing and price ranges
+- Real-time pool information and statistics
+
+### Position Management
+- Full lifecycle management (create, view, modify, close)
+- Support for adding/removing liquidity
+- Position rewards collection
+- Detailed position analytics
+
+### Swap Operations
+- Supports both A→B and B→A swaps
+- Configurable slippage protection
+- Real-time price estimation
+- Transaction link generation for tracking
 
 ## License
 

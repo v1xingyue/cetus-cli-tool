@@ -1,6 +1,6 @@
 {
   "name": "cetus-cli-tool",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -17,7 +17,7 @@
     "cli",
     "tool"
   ],
-  "author": "v1xingyue<v1xingyue@gmail.com>",
+  "author": "v1xingyue<qixingyue@gmail.com>",
   "license": "ISC",
   "description": "A command-line interface tool for interacting with the Cetus Protocol on the Sui blockchain.",
   "devDependencies": {
