@@ -17,7 +17,7 @@ interface Option {
 
 const createLiquidity: CommandModule<Option, Option> = {
   command: "create-liquidity",
-  describe: "create liquidity [test version, may have bug]",
+  describe: "create liquidity",
 
   builder: (yargs) => {
     return yargs

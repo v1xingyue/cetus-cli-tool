@@ -29,12 +29,12 @@ const listPool: CommandModule<Option, Option> = {
     console.log(`current network: ${runtime.network}`);
     const sdk = getCetusSdk(runtime.getNetwork() as CetusNetwork);
 
-    const pools = await sdk.Pool.getPoolImmutablesWithPage();
+    const pools = await sdk.Pool.getPoolByCoins(args.coins);
 
-    for (let pool of pools.data) {
+    for (let pool of pools) {
+      console.log(`======== ${pool.poolAddress} ========`);
       const metadataA = await runtime.getCoinMetadata(pool.coinTypeA);
       const metadataB = await runtime.getCoinMetadata(pool.coinTypeB);
-      console.log(pool.coinTypeA, pool.coinTypeB, pool.poolAddress);
       if (!metadataA || !metadataB) {
         console.error("coin metadata not found");
         return;
@@ -44,7 +44,7 @@ const listPool: CommandModule<Option, Option> = {
         console.error("coin metadata not found");
         return;
       }
-      console.log(pool.poolAddress, pool.coinTypeA, pool.coinTypeB);
+      console.log(pool.coinTypeA, pool.coinTypeB);
     }
   },
 };

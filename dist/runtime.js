@@ -169,7 +169,7 @@ export class Runtime {
         if (!coinType.startsWith("0x")) {
             coinType = `0x${coinType}`;
         }
-        console.log("getCoinMetadata coinType", coinType);
+        // console.log("getCoinMetadata coinType", coinType);
         const cacheKey = `coin_metadata_${this.network}_${coinType}`;
         const dataCache = this.cache.get(cacheKey);
         if (dataCache) {
