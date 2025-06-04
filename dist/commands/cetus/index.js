@@ -4,6 +4,7 @@ import listPool from "./list-pool.js";
 import createPool from "./create-pool.js";
 import listPositions from "./positions.js";
 import swapCommand from "./swap.js";
+import removeLiquidity from "./remove-liquidity.js";
 let commands = [
     hello,
     info,
@@ -11,6 +12,7 @@ let commands = [
     createPool,
     listPositions,
     swapCommand,
+    removeLiquidity,
 ];
 const cetusCommand = {
     command: "cetus",

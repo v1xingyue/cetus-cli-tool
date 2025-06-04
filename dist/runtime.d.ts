@@ -13,7 +13,7 @@ export declare class Runtime {
     getNetwork(): string;
     getSuiClient(): SuiClient;
     publishPackageTransaction(params: PublishParams): Transaction;
-    updateMetaTransaction(treasury: string, meta: string, name: string, symbol: string, description: string, coinType: string): Transaction;
+    updateMetaTransaction(treasury: string, meta: string, name: string, symbol: string, description: string, coinType: string, icon: string): Transaction;
     getWalletAddress(): string;
     getUpgradeCap(packageId: string): Promise<import("@mysten/sui/dist/cjs/client/index.js").SuiObjectResponse>;
     getTreasuryCap(packageId: string): Promise<import("@mysten/sui/dist/cjs/client/index.js").SuiObjectResponse>;

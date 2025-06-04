@@ -27,7 +27,7 @@ export class Runtime {
         tx.transferObjects([upgradeCap], this.getWalletAddress());
         return tx;
     }
-    updateMetaTransaction(treasury, meta, name, symbol, description, coinType) {
+    updateMetaTransaction(treasury, meta, name, symbol, description, coinType, icon) {
         console.log("cointype is ", coinType);
         const tx = new Transaction();
         tx.moveCall({
@@ -41,13 +41,14 @@ export class Runtime {
             arguments: [tx.object(treasury), tx.object(meta), tx.pure.string(symbol)],
         });
         tx.moveCall({
-            target: `0x2::coin::update_description`,
+            target: `0x2::coin::update_symbol`,
             typeArguments: [coinType],
-            arguments: [
-                tx.object(treasury),
-                tx.object(meta),
-                tx.pure.string(description),
-            ],
+            arguments: [tx.object(treasury), tx.object(meta), tx.pure.string(symbol)],
+        });
+        tx.moveCall({
+            target: `0x2::coin::update_icon_url`,
+            typeArguments: [coinType],
+            arguments: [tx.object(treasury), tx.object(meta), tx.pure.string(icon)],
         });
         tx.moveCall({
             target: "0x2::transfer::public_freeze_object",
@@ -100,7 +101,7 @@ export class Runtime {
         return transaction;
     }
     async signAndExecute(tx) {
-        tx.setGasBudget(300000000);
+        tx.setGasBudget(200000000);
         return this.getSuiClient().signAndExecuteTransaction({
             transaction: tx,
             signer: this.account,
@@ -165,7 +166,10 @@ export class Runtime {
                     throw new Error(`coin alias type ${coinTypeOrAlias} not found`);
             }
         }
-        console.log("coinType", coinType);
+        if (!coinType.startsWith("0x")) {
+            coinType = `0x${coinType}`;
+        }
+        console.log("getCoinMetadata coinType", coinType);
         const cacheKey = `coin_metadata_${this.network}_${coinType}`;
         const dataCache = this.cache.get(cacheKey);
         if (dataCache) {

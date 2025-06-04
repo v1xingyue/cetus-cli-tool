@@ -1,5 +1,6 @@
 import { getCreatedObject, loadRuntime } from "../utils.js";
 import { getDeployJson } from "../deploy_jsons/index.js";
+import { generateTokenIconSVG, svgToBase64 } from "../svg.js";
 const createToken = {
     command: "create-token",
     describe: "create a new token",
@@ -24,6 +25,10 @@ const createToken = {
             .option("description", {
             description: "Specify the description of the token",
             default: "No description",
+        })
+            .option("icon", {
+            description: "Specify the icon url or base64 of the token",
+            default: "",
         });
     },
     async handler(args) {
@@ -33,6 +38,9 @@ const createToken = {
             const packageData = getDeployJson(args.decimal);
             if (!packageData) {
                 throw new Error("Failed to load package data");
+            }
+            if (args.icon == "") {
+                args.icon = svgToBase64(generateTokenIconSVG(args.symbol));
             }
             const tx = runtime.publishPackageTransaction(packageData);
             const resp = await runtime.signAndExecute(tx);
@@ -54,7 +62,7 @@ const createToken = {
                 throw new Error("Failed to create treasury cap");
             }
             const coinType = metaData.objectType.substring(24, metaData.objectType.length - 1);
-            const update_tx = runtime.updateMetaTransaction(treasuryCap.objectID, metaData.objectID, args.name, args.symbol, args.description, coinType);
+            const update_tx = runtime.updateMetaTransaction(treasuryCap.objectID, metaData.objectID, args.name, args.symbol, args.description, coinType, args.icon);
             const updateResp = await runtime.signAndExecute(update_tx);
             console.log(`update transaction : ${runtime.getTransactionLink(updateResp.digest)}`);
         }

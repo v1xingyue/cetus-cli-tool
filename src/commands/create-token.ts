@@ -52,7 +52,7 @@ const createToken: CommandModule<Option, Option> = {
         throw new Error("Failed to load package data");
       }
 
-      if (args.icon != "") {
+      if (args.icon == "") {
         args.icon = svgToBase64(generateTokenIconSVG(args.symbol));
       }
 
@@ -94,7 +94,8 @@ const createToken: CommandModule<Option, Option> = {
         args.name,
         args.symbol,
         args.description,
-        coinType
+        coinType,
+        args.icon
       );
 
       const updateResp = await runtime.signAndExecute(update_tx);
