@@ -1,12 +1,14 @@
 import { CommandModule } from "yargs";
 import { getCreatedObject, loadRuntime } from "../utils.js";
 import { getDeployJson } from "../deploy_jsons/index.js";
+import { generateTokenIconSVG, svgToBase64 } from "../svg.js";
 
 interface Option {
   name: string;
   decimal: number;
   symbol: string;
   description: string;
+  icon: string;
 }
 
 const createToken: CommandModule<Option, Option> = {
@@ -34,6 +36,10 @@ const createToken: CommandModule<Option, Option> = {
       .option("description", {
         description: "Specify the description of the token",
         default: "No description",
+      })
+      .option("icon", {
+        description: "Specify the icon url or base64 of the token",
+        default: "",
       });
   },
 
@@ -45,6 +51,11 @@ const createToken: CommandModule<Option, Option> = {
       if (!packageData) {
         throw new Error("Failed to load package data");
       }
+
+      if (args.icon != "") {
+        args.icon = svgToBase64(generateTokenIconSVG(args.symbol));
+      }
+
       const tx = runtime.publishPackageTransaction(packageData);
       const resp = await runtime.signAndExecute(tx);
       const transactionBlock = await runtime.waitAndReturn(resp.digest);
@@ -65,7 +76,7 @@ const createToken: CommandModule<Option, Option> = {
       console.log(`metaData : ${metaData?.objectID}`);
       console.log(`treasuryCap : ${treasuryCap?.objectID}`);
       console.log(
-        `transaction link : ${runtime.getTransactionLink(resp.digest)}`,
+        `transaction link : ${runtime.getTransactionLink(resp.digest)}`
       );
 
       if (!treasuryCap || !metaData || !updateCap) {
@@ -74,7 +85,7 @@ const createToken: CommandModule<Option, Option> = {
 
       const coinType = metaData.objectType.substring(
         24,
-        metaData.objectType.length - 1,
+        metaData.objectType.length - 1
       );
 
       const update_tx = runtime.updateMetaTransaction(
@@ -83,13 +94,13 @@ const createToken: CommandModule<Option, Option> = {
         args.name,
         args.symbol,
         args.description,
-        coinType,
+        coinType
       );
 
       const updateResp = await runtime.signAndExecute(update_tx);
 
       console.log(
-        `update transaction : ${runtime.getTransactionLink(updateResp.digest)}`,
+        `update transaction : ${runtime.getTransactionLink(updateResp.digest)}`
       );
     } catch (error) {
       console.log("create token error :", error);
