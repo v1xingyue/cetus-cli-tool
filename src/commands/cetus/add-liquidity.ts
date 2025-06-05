@@ -15,9 +15,10 @@ interface Option {
   position: string;
 }
 
-const createLiquidity: CommandModule<Option, Option> = {
-  command: "create-liquidity",
-  describe: "create liquidity",
+const addLiquidity: CommandModule<Option, Option> = {
+  command: "add-liquidity",
+  describe:
+    "add liquidity , if position is not provided, it will create a new position",
 
   builder: (yargs) => {
     return yargs
@@ -126,4 +127,4 @@ const createLiquidity: CommandModule<Option, Option> = {
   },
 };
 
-export default createLiquidity;
+export default addLiquidity;

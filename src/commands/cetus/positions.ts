@@ -1,7 +1,7 @@
-import { CommandModule, string } from "yargs";
+import { CommandModule } from "yargs";
 import { loadRuntime } from "../../utils.js";
-import { getCetusSdk, getPriceFromSqrtPrice } from "../../cetus_tool.js";
-import { CetusNetwork, SuiCoin } from "../../common.js";
+import { getCetusSdk } from "../../cetus_tool.js";
+import { CetusNetwork } from "../../common.js";
 import { ClmmPoolUtil, TickMath } from "@cetusprotocol/cetus-sui-clmm-sdk";
 import BN from "bn.js";
 

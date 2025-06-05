@@ -6,7 +6,7 @@ import BN from "bn.js";
 import Decimal from "decimal.js";
 const swapCommand = {
     command: "swap",
-    describe: "swap from pool by pool address and input amount of coin a",
+    describe: "swap from pool by pool address and input amount of coin a.",
     builder: (yargs) => {
         return yargs
             .option("pool-address", {
@@ -22,9 +22,15 @@ const swapCommand = {
         })
             .option("a2b", {
             type: "boolean",
-            description: "swap a to b or b to a , default is a to b",
+            description: "swap a to b",
             demandOption: true,
             default: true,
+        })
+            .option("b2a", {
+            type: "boolean",
+            description: "swap b to a.",
+            demandOption: true,
+            default: false,
         })
             .option("slippage", {
             type: "number",
@@ -51,7 +57,11 @@ const swapCommand = {
             return;
         }
         let inputAmount = new Decimal(0);
-        if (args.a2b) {
+        let a2b = args.a2b;
+        if (args.b2a) {
+            a2b = false;
+        }
+        if (a2b) {
             inputAmount = d(Number(args.amount) * 10 ** metadataA.decimals);
         }
         else {
@@ -65,7 +75,7 @@ const swapCommand = {
             coinTypeB: pool.coinTypeB,
             decimalsA: metadataA.decimals, // coin a 's decimals
             decimalsB: metadataB.decimals, // coin b 's decimals
-            a2b: args.a2b,
+            a2b,
             byAmountIn: true, // fix token a amount
             amount: inputAmount.toString(),
         });
@@ -76,7 +86,7 @@ const swapCommand = {
         const amountLimit = adjustForSlippage(new BN(toAmount), slippage, !preSwap.byAmountIn);
         const swapPayload = await sdk.Swap.createSwapTransactionPayload({
             pool_id: pool.poolAddress,
-            a2b: args.a2b,
+            a2b,
             by_amount_in: true,
             amount: preSwap.amount.toString(),
             amount_limit: amountLimit.toString(),

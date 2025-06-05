@@ -10,7 +10,7 @@ interface Option {
 
 const listPool: CommandModule<Option, Option> = {
   command: "list-pool",
-  describe: "list pools by coins",
+  describe: "list pools by coins. This not work for testnet.",
 
   builder: (yargs) => {
     return yargs.option("coins", {

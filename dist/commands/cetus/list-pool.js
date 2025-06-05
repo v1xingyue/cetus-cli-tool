@@ -3,7 +3,7 @@ import { getCetusSdk } from "../../cetus_tool.js";
 import { SuiCoin } from "../../common.js";
 const listPool = {
     command: "list-pool",
-    describe: "list pools by coins",
+    describe: "list pools by coins. This not work for testnet.",
     builder: (yargs) => {
         return yargs.option("coins", {
             type: "array",

@@ -6,7 +6,7 @@ import listPositions from "./positions.js";
 import swapCommand from "./swap.js";
 import removeLiquidity from "./remove-liquidity.js";
 import closePosition from "./close-position.js";
-import createLiquidity from "./create-liquidity.js";
+import addLiquidity from "./add-liquidity.js";
 let commands = [
     hello,
     info,
@@ -16,7 +16,7 @@ let commands = [
     swapCommand,
     removeLiquidity,
     closePosition,
-    createLiquidity,
+    addLiquidity,
 ];
 const cetusCommand = {
     command: "cetus",
