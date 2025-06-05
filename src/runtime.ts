@@ -62,9 +62,13 @@ export class Runtime {
     });
 
     tx.moveCall({
-      target: `0x2::coin::update_symbol`,
+      target: `0x2::coin::update_description`,
       typeArguments: [coinType],
-      arguments: [tx.object(treasury), tx.object(meta), tx.pure.string(symbol)],
+      arguments: [
+        tx.object(treasury),
+        tx.object(meta),
+        tx.pure.string(description),
+      ],
     });
 
     tx.moveCall({
