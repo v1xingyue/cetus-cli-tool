@@ -1,44 +1,30 @@
 {
-  "name": "cetus-cli-tool",
-  "version": "1.0.9",
-  "main": "index.js",
-  "type": "module",
-  "bin": {
-    "cetus-cli-tool": "./dist/cli.js"
-  },
+  "name": "cetus-tools-monorepo",
+  "version": "1.0.0",
+  "description": "Monorepo for Cetus Protocol tools - CLI and Web interface",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build:tx_json": "cd fast_coin && sui move build --dump-bytecode-as-base64 > ../src/fast_coin_tx.json ",
-    "build": "tsc",
-    "dev": "cross-env NODE_OPTIONS='--loader ts-node/esm' ts-node src/cli.ts"
+    "build:all": "pnpm -r run build",
+    "dev:cli": "pnpm --filter cli run dev",
+    "dev:web": "pnpm --filter web run dev",
+    "build:cli": "pnpm --filter cli run build",
+    "build:web": "pnpm --filter web run build",
+    "install:all": "pnpm install"
   },
   "keywords": [
     "cetus",
     "sui",
     "cli",
-    "tool"
+    "web",
+    "defi",
+    "monorepo"
   ],
   "author": "v1xingyue<qixingyue@gmail.com>",
   "license": "ISC",
-  "description": "A command-line interface tool for interacting with the Cetus Protocol on the Sui blockchain.",
   "devDependencies": {
-    "@types/bn.js": "^5.1.6",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^22.15.26",
-    "@types/yargs": "^17.0.33",
-    "mocha": "^11.5.0",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@cetusprotocol/cetus-sui-clmm-sdk": "^5.3.4",
-    "@mysten/sui": "^1.30.1",
-    "bn.js": "^5.2.2",
-    "chalk": "^5.4.1",
-    "cross-env": "^7.0.3",
-    "decimal.js": "^10.5.0",
-    "dotenv": "^16.5.0",
-    "tslib": "^2.8.1",
-    "yargs": "^18.0.0"
   }
 }

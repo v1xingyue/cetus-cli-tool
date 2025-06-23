@@ -1,4 +1,36 @@
 .env
 .cache.json
 node_modules
-fast_coin/build
+
+# CLI specific
+packages/cli/fast_coin/build
+packages/cli/dist
+packages/cli/.cache.json
+
+# Web specific
+packages/web/.next/
+packages/web/out/
+packages/web/.env.local
+packages/web/.env.production.local
+packages/web/.vercel
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
